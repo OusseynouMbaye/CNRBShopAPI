@@ -11,5 +11,15 @@ namespace CNRBShopAPI.DbContexts
         public CNRBShopContext(DbContextOptions<CNRBShopContext> options) : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelbuilder)
+        {
+            modelbuilder.Entity<Product>()
+                .HasOne(product => product.Category)
+                .WithMany(categorie => categorie.Products)
+                .HasForeignKey(product => product.CategoryId);
+
+            base.OnModelCreating(modelbuilder);
+        }
     }
 }
