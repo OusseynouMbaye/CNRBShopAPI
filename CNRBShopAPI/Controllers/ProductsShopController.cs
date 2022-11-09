@@ -19,6 +19,18 @@ namespace CNRBShopAPI.Controllers
         {
             var products = await _productRepository.GetAllProductsAsync();
             return Ok(products);
+        } 
+        
+        [HttpGet("{productid}")]
+        public async Task<ActionResult<IEnumerable<ProductsDataStore>>> GetProductByID(int productid)
+        {
+            var product = await _productRepository.GetProductByIdAsync(productid);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
         }
     }
 }

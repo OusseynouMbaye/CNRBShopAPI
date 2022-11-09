@@ -18,9 +18,9 @@ namespace CNRBShopAPI.Services
             return await _context.Products.OrderBy(product => product.ProductName).ToListAsync();
         }
 
-        public Task<Product> GetProductByIdAsync()
+        public async Task<Product?> GetProductByIdAsync(int productID)
         {
-            throw new NotImplementedException();
+            return await _context.Products.Where(product => product.ProductId == productID).FirstOrDefaultAsync();
         }
 
         public Task AddProductAsync(Product product)
