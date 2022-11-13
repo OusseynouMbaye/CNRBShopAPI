@@ -9,7 +9,7 @@ namespace CNRBShopAPI
         private readonly CategoriesDataStore _categoriesDataStore = new CategoriesDataStore();
         public ProductsDataStore()
         {
-            Products = new List<Product>()
+            /*Products = new List<Product>()
             {
                 new Product()
                 {
@@ -38,7 +38,7 @@ namespace CNRBShopAPI
                     InStock =true,
                     IsProductOfTheWeek=false
                 }
-            };
+            };*/
         }
 
 
