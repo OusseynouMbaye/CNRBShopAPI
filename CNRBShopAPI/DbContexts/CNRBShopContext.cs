@@ -1,4 +1,5 @@
-﻿using CNRBShopAPI.Models;
+﻿using CNRBShopAPI.Entities;
+//using CNRBShopAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CNRBShopAPI.DbContexts

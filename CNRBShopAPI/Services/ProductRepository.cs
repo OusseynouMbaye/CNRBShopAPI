@@ -1,5 +1,6 @@
 ﻿using CNRBShopAPI.DbContexts;
-using CNRBShopAPI.Models;
+using CNRBShopAPI.Entities;
+//using CNRBShopAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CNRBShopAPI.Services
@@ -23,10 +24,16 @@ namespace CNRBShopAPI.Services
             return await _context.Products.Where(product => product.ProductId == productID).FirstOrDefaultAsync();
         }
 
-        public Task AddProductAsync(Product product)
+        public void AddProductAsync(Product productToAdd)
         {
-            throw new NotImplementedException();
+            if (productToAdd == null)
+            {
+                throw new ArgumentNullException(nameof(productToAdd));
+            }
+
+            _context.Add(productToAdd);
         }
+
         public void UpdateProduct(Product product)
         {
             throw new NotImplementedException();
@@ -37,10 +44,9 @@ namespace CNRBShopAPI.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> SaveChangesAsync()
+        public async Task<bool> SaveChangesAsync()
         {
-            throw new NotImplementedException();
+            return (await _context.SaveChangesAsync() >= 0);
         }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using CNRBShopAPI.Models;
+﻿using CNRBShopAPI.Entities;
+//using CNRBShopAPI.Models;
 
 namespace CNRBShopAPI.Services
 {
@@ -6,7 +7,7 @@ namespace CNRBShopAPI.Services
     {
         Task<IEnumerable<Product>> GetAllProductsAsync();
         Task<Product?> GetProductByIdAsync(int productID);
-        Task AddProductAsync(Product product);
+        void AddProductAsync(Product productToAdd);
         void DeleteProduct(int productID);
         void UpdateProduct(Product product);
         Task<bool> SaveChangesAsync();
