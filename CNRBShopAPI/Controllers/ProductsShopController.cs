@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CNRBShopAPI.Controllers
 {
-    [ApiController]
     [Route("api/products")]
+    [ApiController]
     public class ProductsShopController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
@@ -46,6 +46,7 @@ namespace CNRBShopAPI.Controllers
         public async Task<ActionResult<Product>> CreateProduct([FromBody] Product productForCreation)
         {
             var productToAdd = _mapper.Map<Entities.Product>(productForCreation);
+            //categoryId = productToAdd.CategoryId;
              _productRepository.AddProductAsync(productToAdd);
 
             await _productRepository.SaveChangesAsync();
