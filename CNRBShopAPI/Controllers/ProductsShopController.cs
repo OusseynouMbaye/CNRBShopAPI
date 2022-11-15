@@ -12,12 +12,15 @@ namespace CNRBShopAPI.Controllers
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<ProductsShopController> _logger;
 
-        public ProductsShopController(IProductRepository productRepository, ICategoryRepository categoryRepository, IMapper mapper)
+        public ProductsShopController(IProductRepository productRepository, ICategoryRepository categoryRepository,
+            IMapper mapper, ILogger<ProductsShopController> logger)
         {
             _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
             _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet]
@@ -44,16 +47,17 @@ namespace CNRBShopAPI.Controllers
             return Ok(product);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct(int categoryId,[FromBody] Product productForCreation)
+        [HttpPost()]
+        public async Task<ActionResult<Product>> CreateProduct(int categoryId, [FromBody] Product productForCreation)
         {
-            if (!await _categoryRepository.CategoryExistAsync(categoryId))
-            {
-                return NotFound();
-            }
+            //if (!await _categoryRepository.CategoryExistAsync(categoryId))
+            //{
+            //    return NotFound();
+            //}
+
             var productToAdd = _mapper.Map<Entities.Product>(productForCreation);
-            categoryId = productToAdd.CategoryId;
-            _productRepository.AddProductAsync(productToAdd);
+            //categoryId = productToAdd.CategoryId;
+            _productRepository.AddProduct(productToAdd);
 
             await _productRepository.SaveChangesAsync();
 
@@ -61,10 +65,10 @@ namespace CNRBShopAPI.Controllers
             return CreatedAtRoute("GetProductByID",
                 new
                 {
-                    categoryId,
+                    categoryId = categoryId,
                     productId = productToReturn.ProductId,
                 },
                 productToReturn);
         }
     }
-} 
+}

@@ -24,7 +24,7 @@ namespace CNRBShopAPI.Services
             return await _context.Products.Where(product => product.ProductId == productID).FirstOrDefaultAsync();
         }
 
-        public void AddProductAsync(Product productToAdd)
+        public void AddProduct(Product productToAdd)
         {
             if (productToAdd == null)
             {

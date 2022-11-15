@@ -16,11 +16,11 @@ namespace CNRBShopAPI.DbContexts
 
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
-            /* modelbuilder.Entity<Product>()
-                 .HasOne(product => product.Category)
-                 .WithMany(categorie => categorie.Products)
-                 .HasForeignKey(product => product.CategoryId);
-            */
+      /*      modelbuilder.Entity<Product>()
+                .HasOne(product => product.Category)
+                .WithMany(categorie => categorie.Products)
+                .HasForeignKey(product => product.CategoryId);*/
+
             modelbuilder.Entity<Product>().HasData(
                 new Product()
                 {
@@ -30,7 +30,8 @@ namespace CNRBShopAPI.DbContexts
                     IsProductOfTheWeek = true,
                     InStock = true,
                     CategoryId = 1
-                }, new Product()
+                }, 
+                new Product()
                 {
                     ProductId = 2,
                     ProductName = "Swimming suit",

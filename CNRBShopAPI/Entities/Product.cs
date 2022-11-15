@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CNRBShopAPI.Entities
 {
+    [Table("Products")]
     public class Product
     {
         [Key]
@@ -14,7 +15,6 @@ namespace CNRBShopAPI.Entities
         public bool InStock { get; set; }
         [ForeignKey("CategoryId")]
         public int CategoryId { get; set; }
-
         public Category? Category { get; set; } /*= default!;*/
 
     }
