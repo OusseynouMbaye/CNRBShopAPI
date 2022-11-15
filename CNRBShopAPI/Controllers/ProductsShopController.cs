@@ -10,11 +10,13 @@ namespace CNRBShopAPI.Controllers
     public class ProductsShopController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public ProductsShopController(IProductRepository productRepository, IMapper mapper)
+        public ProductsShopController(IProductRepository productRepository, ICategoryRepository categoryRepository, IMapper mapper)
         {
             _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
+            _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -43,21 +45,26 @@ namespace CNRBShopAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct([FromBody] Product productForCreation)
+        public async Task<ActionResult<Product>> CreateProduct(int categoryId,[FromBody] Product productForCreation)
         {
+            if (!await _categoryRepository.CategoryExistAsync(categoryId))
+            {
+                return NotFound();
+            }
             var productToAdd = _mapper.Map<Entities.Product>(productForCreation);
-            //categoryId = productToAdd.CategoryId;
-             _productRepository.AddProductAsync(productToAdd);
+            categoryId = productToAdd.CategoryId;
+            _productRepository.AddProductAsync(productToAdd);
 
             await _productRepository.SaveChangesAsync();
 
             var productToReturn = _mapper.Map<Models.Product>(productToAdd);
             return CreatedAtRoute("GetProductByID",
                 new
-                {                 
+                {
+                    categoryId,
                     productId = productToReturn.ProductId,
                 },
                 productToReturn);
         }
     }
-}
+} 

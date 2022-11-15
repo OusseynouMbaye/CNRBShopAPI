@@ -7,9 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 //builder.Services.AddCors();
 
-builder.Services.AddControllers(
-    options => options.ReturnHttpNotAcceptable = true)
-    .AddXmlDataContractSerializerFormatters();
+builder.Services.AddControllers(options =>
+{
+    options.ReturnHttpNotAcceptable = true;
+}).AddNewtonsoftJson()
+  .AddXmlDataContractSerializerFormatters();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -21,6 +23,7 @@ builder.Services.AddDbContext<CNRBShopContext>(
         builder.Configuration["ConnectionStrings:CNRBShopDBConnectionString"]));
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
