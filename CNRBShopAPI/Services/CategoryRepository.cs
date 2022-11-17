@@ -1,4 +1,5 @@
 ﻿using CNRBShopAPI.DbContexts;
+using CNRBShopAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CNRBShopAPI.Services
@@ -12,9 +13,14 @@ namespace CNRBShopAPI.Services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<bool> CategoryExistAsync(int categoryId)
+        public async Task<IEnumerable<Category>> GetCategories()
         {
-            return await _context.Categories.AnyAsync(categorie => categorie.CategoryId == categoryId);
+            return await _context.Categories.OrderBy(category => category.CategoryName).ToListAsync();
+        }
+
+        public bool CategoryExist(int categoryId)
+        {
+            return  _context.Categories.Any(categorie => categorie.CategoryId == categoryId);
         }
     }
 }

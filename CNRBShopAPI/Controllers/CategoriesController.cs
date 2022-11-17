@@ -1,15 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CNRBShopAPI.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CNRBShopAPI.Controllers
 {
-    [ApiController]
     [Route("api/categories")]
+    [ApiController]
     public class CategoriesController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<CategoriesDataStore> GetCategories()
+        public readonly ICategoryRepository _categoryRepository;
+        public CategoriesController(ICategoryRepository categoryRepository)
         {
-            return Ok(CategoriesDataStore.categoriesData.Categories);
+            _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult<CategoriesDataStore>> GetCategories()
+        {
+            var categories = await _categoryRepository.GetCategories();
+            if (categories ==null)
+            {
+                return NotFound();
+            }
+            return Ok(categories);
         } 
         
         [HttpGet("{idcategory}")]

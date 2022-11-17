@@ -1,7 +1,10 @@
-﻿namespace CNRBShopAPI.Services
+﻿using CNRBShopAPI.Entities;
+
+namespace CNRBShopAPI.Services
 {
     public interface ICategoryRepository
     {
-        Task<bool> CategoryExistAsync(int categoryId);
+        Task<IEnumerable<Category>> GetCategories();
+        bool CategoryExist(int categoryId);
     }
 }
