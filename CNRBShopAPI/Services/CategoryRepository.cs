@@ -18,9 +18,20 @@ namespace CNRBShopAPI.Services
             return await _context.Categories.OrderBy(category => category.CategoryName).ToListAsync();
         }
 
-        public bool CategoryExist(int categoryId)
+        public async Task<Category?> GetCategory(int categoryId, bool isWithProduct)
         {
-            return  _context.Categories.Any(categorie => categorie.CategoryId == categoryId);
+            if (isWithProduct)
+            {
+                return await _context.Categories.Include(p => p.Products)
+                            .Where(c => c.CategoryId == categoryId).FirstOrDefaultAsync();
+            }
+
+            return await _context.Categories.Where(c => c.CategoryId == categoryId).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> IsCategoryExist(int categoryId)
+        {
+            return await _context.Categories.AnyAsync(categorie => categorie.CategoryId == categoryId);
         }
     }
 }
