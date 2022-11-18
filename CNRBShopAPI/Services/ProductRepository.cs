@@ -14,15 +14,27 @@ namespace CNRBShopAPI.Services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             return await _context.Products.OrderBy(product => product.ProductName).ToListAsync();
+        }
+
+        public async Task<Product?> GetProductsAsync(int categoryId, int productId)
+        {
+            return await _context.Products.Where(p => p.ProductId == productId
+                                                   && p.CategoryId == categoryId).FirstOrDefaultAsync();
         }
 
         public async Task<Product?> GetProductByIdAsync(int productID)
         {
             return await _context.Products.Where(product => product.ProductId == productID).FirstOrDefaultAsync();
+        } 
+        
+        public async Task<bool> IsProductExist(int productId)
+        {
+            return await _context.Products.AnyAsync(product => product.ProductId == productId);
         }
+
 
         public void AddProduct(Product productToAdd)
         {
@@ -39,9 +51,9 @@ namespace CNRBShopAPI.Services
             throw new NotImplementedException();
         }
 
-        public void DeleteProduct(int productID)
+        public void DeleteProduct(Product product)
         {
-            throw new NotImplementedException();
+            _context.Products.Remove(product);
         }
 
         public async Task<bool> SaveChangesAsync()
