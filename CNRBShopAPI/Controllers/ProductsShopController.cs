@@ -26,10 +26,10 @@ namespace CNRBShopAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductsDataStore>>> GetProducts()
         {
-            var products = await _productRepository.GetAllProductsAsync();
+            var products = await _productRepository.GetProductsAsync();
             if (products == null)
             {
-                NotFound();
+                return NotFound();
             }
 
             return Ok(products);
@@ -47,16 +47,15 @@ namespace CNRBShopAPI.Controllers
             return Ok(product);
         }
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct(int categoryId, [FromBody] Product productForCreation)
         {
-            //if (!await _categoryRepository.CategoryExistAsync(categoryId))
+            //if (! _categoryRepository.CategoryExist(categoryId))
             //{
             //    return NotFound();
             //}
 
             var productToAdd = _mapper.Map<Entities.Product>(productForCreation);
-            //categoryId = productToAdd.CategoryId;
             _productRepository.AddProduct(productToAdd);
 
             await _productRepository.SaveChangesAsync();
@@ -65,10 +64,23 @@ namespace CNRBShopAPI.Controllers
             return CreatedAtRoute("GetProductByID",
                 new
                 {
-                    categoryId = categoryId,
+                    categoryId = productToReturn.CategoryId,
                     productId = productToReturn.ProductId,
                 },
                 productToReturn);
+        }
+
+        [HttpDelete("productId")]
+        public async Task<ActionResult> DeleteProduct(int productId)
+        {
+            var productToDelete = await _productRepository.GetProductByIdAsync(productId);
+            if (productToDelete == null)
+            {
+                return NotFound();
+            }
+            _productRepository.DeleteProduct(productToDelete); //
+            await _productRepository.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

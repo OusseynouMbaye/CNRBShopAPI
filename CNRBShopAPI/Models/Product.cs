@@ -14,9 +14,9 @@ namespace CNRBShopAPI.Models
         public bool InStock { get; set; }
 
         //[ForeignKey("CategoryId")]
-        //public int CategoryId { get; set; }
-        
-        //public Category? Category { get; set; } /*= default!; */
+        public int CategoryId { get; set; }
+
+        public Category? Category { get; set; } /*= default!; */
 
     }
 }
