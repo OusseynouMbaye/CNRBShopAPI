@@ -76,13 +76,11 @@ namespace CNRBShopAPI.Controllers
             
         }
 
-        [HttpPut("productid")]
-        public async Task<ActionResult> UpdateProduct(int productId, int categoryId, ProductForUpdate product) // is it correct if i create a model for update
+        [HttpPut("{productid}/{categoryid}")]
+        public async Task<ActionResult> UpdateProduct(int productId,int categoryId, [FromBody]ProductForUpdate product)
         {
-            //if (! _categoryRepository.CategoryExist(categoryId))
-            //{
-            //    return NotFound();
-            //}
+            if (!await _categoryRepository.IsCategoryExist(product.CategoryId))
+                return NotFound();
 
             var productEntity = await _productRepository.GetProductsAsync(categoryId, productId);
             if (productEntity == null)
@@ -90,11 +88,14 @@ namespace CNRBShopAPI.Controllers
                 return NotFound();
             }
 
-            /*what is th best way to map */
-            var productToPatch = _mapper.Map<Models.Product>(productEntity); //1 
-            //var productToPatchTwo = _mapper.Map(product,productEntity); // 2 a revoir 
+            _mapper.Map(product,productEntity);
 
-            return NoContent();
+            if (await _productRepository.SaveChangesAsync())
+            {
+                return NoContent();
+            }
+
+            return BadRequest();
         }
 
         [HttpDelete("productId")]
