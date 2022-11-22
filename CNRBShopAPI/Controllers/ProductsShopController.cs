@@ -49,15 +49,13 @@ namespace CNRBShopAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct(int categoryId, [FromBody] Product productForCreation)
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] Product productForCreation)
         {
-            /******** !: Why my verification doesn't work hi give me status 406 
-             * i try to check if the categroy exist
-             * *****/
-            //if (! _categoryRepository.CategoryExist(categoryId))
-            //{
-            //    return NotFound();
-            //}
+            if (productForCreation is null)
+                return BadRequest();
+
+            if (!await _categoryRepository.IsCategoryExist(productForCreation.CategoryId))
+               return NotFound();
 
             var productToAdd = _mapper.Map<Entities.Product>(productForCreation);
             _productRepository.AddProduct(productToAdd);
