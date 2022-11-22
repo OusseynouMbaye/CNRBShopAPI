@@ -7,7 +7,8 @@ namespace CNRBShopAPI.Profiles
         public ProductProfile()
         {
             CreateMap<Models.Product,Entities.Product>().ReverseMap();
-            //CreateMap<Entities.Product,Models.Product>();
+            CreateMap<Models.ProductForUpdate,Entities.Product>().ReverseMap();
+            
         }
     }
 }
