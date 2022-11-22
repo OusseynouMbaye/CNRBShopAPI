@@ -77,7 +77,7 @@ namespace CNRBShopAPI.Controllers
         }
 
         [HttpPut("productid")]
-        public async Task<ActionResult> UpdateProduct(int productId, int categoryId, ProductForUpdateDto product) // is it correct if i create a model for update
+        public async Task<ActionResult> UpdateProduct(int productId, int categoryId, ProductForUpdate product) // is it correct if i create a model for update
         {
             //if (! _categoryRepository.CategoryExist(categoryId))
             //{
