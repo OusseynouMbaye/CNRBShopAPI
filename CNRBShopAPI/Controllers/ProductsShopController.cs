@@ -60,16 +60,20 @@ namespace CNRBShopAPI.Controllers
             var productToAdd = _mapper.Map<Entities.Product>(productForCreation);
             _productRepository.AddProduct(productToAdd);
 
-            await _productRepository.SaveChangesAsync();
+           if(await _productRepository.SaveChangesAsync())
+            {
+                var productToReturn = _mapper.Map<Models.Product>(productToAdd);
+                return CreatedAtRoute("GetProductByID",
+                    new
+                    {
+                        categoryId = productToReturn.CategoryId,
+                        productId = productToReturn.ProductId,
+                    },
+                    productToReturn);
+            }
 
-            var productToReturn = _mapper.Map<Models.Product>(productToAdd);
-            return CreatedAtRoute("GetProductByID",
-                new
-                {
-                    categoryId = productToReturn.CategoryId,
-                    productId = productToReturn.ProductId,
-                },
-                productToReturn);
+           return BadRequest();
+            
         }
 
         [HttpPut("productid")]
