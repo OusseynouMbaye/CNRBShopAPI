@@ -1,15 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace CNRBShopAPI.Models
+﻿namespace CNRBShopAPI.Models
 {
-    public class Product 
+    public class ProductForUpdateDto
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;
-        public decimal Price { get; set; }    
+        public decimal Price { get; set; }
         public bool IsProductOfTheWeek { get; set; }
         public bool InStock { get; set; }
 
@@ -18,6 +12,5 @@ namespace CNRBShopAPI.Models
         public int CategoryId { get; set; }
 
         public Category? Category { get; set; } /*= default!; */
-
     }
 }

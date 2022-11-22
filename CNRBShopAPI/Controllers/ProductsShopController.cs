@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+//using CNRBShopAPI.Entities;
 using CNRBShopAPI.Models;
 using CNRBShopAPI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -50,6 +51,9 @@ namespace CNRBShopAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct(int categoryId, [FromBody] Product productForCreation)
         {
+            /******** !: Why my verification doesn't work hi give me status 406 
+             * i try to check if the categroy exist
+             * *****/
             //if (! _categoryRepository.CategoryExist(categoryId))
             //{
             //    return NotFound();
@@ -70,6 +74,27 @@ namespace CNRBShopAPI.Controllers
                 productToReturn);
         }
 
+        [HttpPut("productid")]
+        public async Task<ActionResult> UpdateProduct(int productId, int categoryId, ProductForUpdateDto product) // is it correct if i create a model for update
+        {
+            //if (! _categoryRepository.CategoryExist(categoryId))
+            //{
+            //    return NotFound();
+            //}
+
+            var productEntity = await _productRepository.GetProductsAsync(categoryId, productId);
+            if (productEntity == null)
+            {
+                return NotFound();
+            }
+
+            /*what is th best way to map */
+            var productToPatch = _mapper.Map<Models.Product>(productEntity); //1 
+            //var productToPatchTwo = _mapper.Map(product,productEntity); // 2 a revoir 
+
+            return NoContent();
+        }
+
         [HttpDelete("productId")]
         public async Task<ActionResult> DeleteProduct(int productId)
         {
@@ -78,7 +103,7 @@ namespace CNRBShopAPI.Controllers
             {
                 return NotFound();
             }
-            _productRepository.DeleteProduct(productToDelete); //
+            _productRepository.DeleteProduct(productToDelete); 
             await _productRepository.SaveChangesAsync();
             return NoContent();
         }

@@ -6,6 +6,7 @@ namespace CNRBShopAPI.Services
     public interface IProductRepository 
     {
         Task<IEnumerable<Product>> GetProductsAsync();
+        Task<Product?> GetProductsAsync(int categoryId, int productId);
         Task<Product?> GetProductByIdAsync(int productID);
         void AddProduct(Product productToAdd);
         void DeleteProduct(Product productID);
