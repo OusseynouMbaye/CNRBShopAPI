@@ -49,38 +49,44 @@ namespace CNRBShopAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct(int categoryId, [FromBody] Product productForCreation)
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductToCreate productForCreation)
         {
-            /******** !: Why my verification doesn't work hi give me status 406 
-             * i try to check if the categroy exist
-             * *****/
-            //if (! _categoryRepository.CategoryExist(categoryId))
-            //{
-            //    return NotFound();
-            //}
+            if (productForCreation is null)
+            {
+                return BadRequest();
+            }
+
+            if (!await _categoryRepository.IsCategoryExist(productForCreation.CategoryId))
+            {
+                return NotFound();
+            }
 
             var productToAdd = _mapper.Map<Entities.Product>(productForCreation);
             _productRepository.AddProduct(productToAdd);
 
-            await _productRepository.SaveChangesAsync();
 
-            var productToReturn = _mapper.Map<Models.Product>(productToAdd);
-            return CreatedAtRoute("GetProductByID",
-                new
-                {
-                    categoryId = productToReturn.CategoryId,
-                    productId = productToReturn.ProductId,
-                },
-                productToReturn);
+            if (await _productRepository.SaveChangesAsync())
+            {
+                var productToReturn = _mapper.Map<Models.Product>(productToAdd);
+                return CreatedAtRoute("GetProductByID",
+                    new
+                    {
+                        categoryId = productToReturn.CategoryId,
+                        productId = productToReturn.ProductId,
+                    },
+                    productToReturn);
+            }
+
+            return BadRequest();
         }
 
-        [HttpPut("productid")]
-        public async Task<ActionResult> UpdateProduct(int productId, int categoryId, ProductForUpdateDto product) // is it correct if i create a model for update
+        [HttpPut("{productid}/{categoryid}")]
+        public async Task<ActionResult> UpdateProduct(int productId, int categoryId, [FromBody] ProductForUpdate product)
         {
-            //if (! _categoryRepository.CategoryExist(categoryId))
-            //{
-            //    return NotFound();
-            //}
+            if (!await _categoryRepository.IsCategoryExist(product.CategoryId))
+            {
+                return NotFound();
+            }
 
             var productEntity = await _productRepository.GetProductsAsync(categoryId, productId);
             if (productEntity == null)
@@ -88,11 +94,14 @@ namespace CNRBShopAPI.Controllers
                 return NotFound();
             }
 
-            /*what is th best way to map */
-            var productToPatch = _mapper.Map<Models.Product>(productEntity); //1 
-            //var productToPatchTwo = _mapper.Map(product,productEntity); // 2 a revoir 
+            _mapper.Map(product, productEntity);
 
-            return NoContent();
+            if (await _productRepository.SaveChangesAsync())
+            {
+                return NoContent();
+            }
+
+            return BadRequest();
         }
 
         [HttpDelete("productId")]
@@ -103,8 +112,10 @@ namespace CNRBShopAPI.Controllers
             {
                 return NotFound();
             }
-            _productRepository.DeleteProduct(productToDelete); 
+
+            _productRepository.DeleteProduct(productToDelete);
             await _productRepository.SaveChangesAsync();
+
             return NoContent();
         }
     }
