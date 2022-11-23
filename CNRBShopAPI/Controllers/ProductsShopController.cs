@@ -42,6 +42,7 @@ namespace CNRBShopAPI.Controllers
             var product = await _productRepository.GetProductByIdAsync(productid);
             if (product == null)
             {
+                _logger.LogInformation($"Product with id : {productid} doesn't exist");
                 return NotFound();
             }
 
