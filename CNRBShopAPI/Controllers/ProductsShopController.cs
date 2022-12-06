@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-//using CNRBShopAPI.Entities;
 using CNRBShopAPI.Models;
 using CNRBShopAPI.Services;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CNRBShopAPI.Controllers
@@ -54,6 +54,7 @@ namespace CNRBShopAPI.Controllers
         {
             if (productForCreation is null)
             {
+                //_logger.LogInformation($"Product with {productForCreation} doesn't exist");
                 return BadRequest();
             }
 
@@ -84,8 +85,10 @@ namespace CNRBShopAPI.Controllers
         [HttpPut("{productid}/{categoryid}")]
         public async Task<ActionResult> UpdateProduct(int productId, int categoryId, [FromBody] ProductForUpdate product)
         {
+
             if (!await _categoryRepository.IsCategoryExist(product.CategoryId))
             {
+                //_logger.LogInformation($"Product with {product.CategoryId} doesn't exist");
                 return NotFound();
             }
 
@@ -103,6 +106,32 @@ namespace CNRBShopAPI.Controllers
             }
 
             return BadRequest();
+        }
+
+
+        [HttpPatch("{productid}/{categoryid}")]
+        public async Task<ActionResult> PartiallyUpdateProduct(int productId, int categoryId, [FromBody] JsonPatchDocument<ProductForUpdate> patchDocument)
+        {
+            if (patchDocument is null)
+            {
+                return BadRequest();
+            }
+
+            var productDTO = await _productRepository.GetProductsAsync(categoryId, productId);
+            if (productDTO is null)
+            {
+                return NotFound();
+            }
+
+            var productToPatch = _mapper.Map<ProductForUpdate>(productDTO); // May be the mapper is wrong
+            patchDocument.ApplyTo(productToPatch);
+
+            if (await _productRepository.SaveChangesAsync())
+            {
+                return NoContent();
+            }
+
+            return BadRequest(); 
         }
 
         [HttpDelete("productId")]
